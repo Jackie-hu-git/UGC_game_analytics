@@ -164,4 +164,7 @@ CREATE TABLE IF NOT EXISTS genre_benchmarks (
     sentiment_score DECIMAL(5,2),
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(genre, timestamp)
-); 
+);
+
+-- Remove genres column from games table if it exists
+ALTER TABLE games DROP COLUMN IF EXISTS genres; 

@@ -87,7 +87,7 @@ def init_db():
         print(f"Error reading SQL file: {e}")
         raise
 
-def get_game_details(appid, api_key):
+def steam_get_game_details(appid, api_key):
     """Get detailed game information from Steam API with caching and rate limiting."""
     # Check cache first
     cache_file = 'game_details_cache.json'
@@ -192,7 +192,7 @@ def get_game_details(appid, api_key):
             json.dump(cache, f)
         return default_details
 
-def get_top_games(api_key: str, num_games: int = 100) -> List[Dict[str, Any]]:
+def steam_get_top_games(api_key: str, num_games: int = 100) -> List[Dict[str, Any]]:
     """
     Fetch top games from Steam API.
     
@@ -227,7 +227,7 @@ def get_top_games(api_key: str, num_games: int = 100) -> List[Dict[str, Any]]:
                 continue
                 
             # Get game details with caching and rate limiting
-            details = get_game_details(appid, api_key)
+            details = steam_get_game_details(appid, api_key)
             if not details:
                 print(f"No details found for appid {appid}")
                 continue
@@ -262,7 +262,7 @@ def get_top_games(api_key: str, num_games: int = 100) -> List[Dict[str, Any]]:
         print(f"Unexpected error processing API response: {e}")
         return []
 
-def save_to_db(games):
+def steam_save_to_db(games):
     """
     Save game data to the database.
     
@@ -355,7 +355,7 @@ def save_to_db(games):
         cur.close()
         conn.close()
 
-def get_achievement_stats(appid: int, api_key: str) -> List[Dict[str, Any]]:
+def steam_get_achievement_stats(appid: int, api_key: str) -> List[Dict[str, Any]]:
     """
     Fetch achievement statistics for a game.
     """
@@ -385,7 +385,7 @@ def get_achievement_stats(appid: int, api_key: str) -> List[Dict[str, Any]]:
         print(f"Error fetching achievements for appid {appid}: {e}")
         return []
 
-def get_player_history(appid: int, api_key: str) -> List[Dict[str, Any]]:
+def steam_get_player_history(appid: int, api_key: str) -> List[Dict[str, Any]]:
     """
     Fetch player count history for a game.
     """
@@ -410,7 +410,7 @@ def get_player_history(appid: int, api_key: str) -> List[Dict[str, Any]]:
         print(f"Error fetching player history for appid {appid}: {e}")
         return []
 
-def get_game_news(appid: int, api_key: str) -> List[Dict[str, Any]]:
+def steam_get_game_news(appid: int, api_key: str) -> List[Dict[str, Any]]:
     """
     Fetch latest news for a game.
     """
@@ -443,7 +443,7 @@ def get_game_news(appid: int, api_key: str) -> List[Dict[str, Any]]:
         print(f"Error fetching news for appid {appid}: {e}")
         return []
 
-def get_system_requirements(appid: int, api_key: str) -> List[Dict[str, Any]]:
+def steam_get_system_requirements(appid: int, api_key: str) -> List[Dict[str, Any]]:
     """
     Fetch system requirements for a game.
     """
@@ -480,7 +480,7 @@ def get_system_requirements(appid: int, api_key: str) -> List[Dict[str, Any]]:
         print(f"Error fetching system requirements for appid {appid}: {e}")
         return []
 
-def get_user_reviews(appid: int, api_key: str) -> List[Dict[str, Any]]:
+def steam_get_user_reviews(appid: int, api_key: str) -> List[Dict[str, Any]]:
     """
     Fetch user review statistics for a game.
     """
@@ -514,7 +514,7 @@ def get_user_reviews(appid: int, api_key: str) -> List[Dict[str, Any]]:
         print(f"Error fetching user reviews for appid {appid}: {e}")
         return []
 
-def get_extended_game_details(appid: int, api_key: str) -> Dict[str, Any]:
+def steam_get_extended_game_details(appid: int, api_key: str) -> Dict[str, Any]:
     """
     Fetch extended game details including descriptions, images, and support information.
     """
@@ -552,7 +552,7 @@ def get_extended_game_details(appid: int, api_key: str) -> Dict[str, Any]:
         print(f"Error fetching extended details for appid {appid}: {e}")
         return {}
 
-def get_price_history(appid: int, api_key: str) -> Dict[str, Any]:
+def steam_get_price_history(appid: int, api_key: str) -> Dict[str, Any]:
     """
     Fetch current price information and discounts.
     """
@@ -584,7 +584,7 @@ def get_price_history(appid: int, api_key: str) -> Dict[str, Any]:
         print(f"Error fetching price history for appid {appid}: {e}")
         return {}
 
-def get_community_stats(appid: int, api_key: str) -> Dict[str, Any]:
+def steam_get_community_stats(appid: int, api_key: str) -> Dict[str, Any]:
     """
     Fetch community statistics including workshop items, trading cards, and forum activity.
     """
@@ -616,7 +616,7 @@ def get_community_stats(appid: int, api_key: str) -> Dict[str, Any]:
         print(f"Error fetching community stats for appid {appid}: {e}")
         return {}
 
-def get_market_data(appid: int, api_key: str) -> Dict[str, Any]:
+def steam_get_market_data(appid: int, api_key: str) -> Dict[str, Any]:
     """
     Fetch market data including trading cards and item prices.
     """
@@ -662,7 +662,7 @@ def get_market_data(appid: int, api_key: str) -> Dict[str, Any]:
         print(f"Error fetching market data for appid {appid}: {e}")
         return {}
 
-def calculate_genre_benchmarks(api_key: str) -> List[Dict[str, Any]]:
+def steam_calculate_genre_benchmarks(api_key: str) -> List[Dict[str, Any]]:
     """
     Calculate and save genre benchmarks.
     
@@ -804,7 +804,7 @@ def calculate_genre_benchmarks(api_key: str) -> List[Dict[str, Any]]:
             conn.rollback()
         raise
 
-def calculate_market_activity_score(card_price: float, item_price: float, review_score: float) -> float:
+def steam_calculate_market_activity_score(card_price: float, item_price: float, review_score: float) -> float:
     """
     Calculate a normalized market activity score based on card and item prices,
     weighted by game quality (review score).
@@ -820,7 +820,7 @@ def calculate_market_activity_score(card_price: float, item_price: float, review
     # Weighted average with review score as quality indicator
     return (normalized_card_price * 0.4 + normalized_item_price * 0.4 + normalized_review_score * 0.2) * 100
 
-def calculate_community_engagement_score(workshop_items: float, forum_posts: float, group_members: float) -> float:
+def steam_calculate_community_engagement_score(workshop_items: float, forum_posts: float, group_members: float) -> float:
     """
     Calculate a normalized community engagement score based on various metrics.
     """
@@ -835,7 +835,7 @@ def calculate_community_engagement_score(workshop_items: float, forum_posts: flo
     # Weighted average
     return (normalized_workshop * 0.4 + normalized_forum * 0.3 + normalized_members * 0.3) * 100
 
-def calculate_dlc_adoption_rate(dlc_count: float, player_count: float) -> float:
+def steam_calculate_dlc_adoption_rate(dlc_count: float, player_count: float) -> float:
     """
     Calculate DLC adoption rate based on number of DLCs and player count.
     """
@@ -848,7 +848,7 @@ def calculate_dlc_adoption_rate(dlc_count: float, player_count: float) -> float:
     
     return (normalized_dlc * normalized_players) * 100
 
-def calculate_sentiment_score(positive_ratio: float, review_score: float) -> float:
+def steam_calculate_sentiment_score(positive_ratio: float, review_score: float) -> float:
     """
     Calculate a sentiment score based on positive review ratio and review score.
     """
@@ -862,7 +862,7 @@ def calculate_sentiment_score(positive_ratio: float, review_score: float) -> flo
     # Weighted average
     return (normalized_ratio * 0.6 + normalized_score * 0.4) * 100
 
-def save_additional_data(appid: int, api_key: str) -> None:
+def steam_save_additional_data(appid: int, api_key: str) -> None:
     """
     Save additional game data to the database.
     
@@ -876,7 +876,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
     try:
         # Get extended game details
         try:
-            details = get_extended_game_details(appid, api_key)
+            details = steam_get_extended_game_details(appid, api_key)
             if details:
                 # Convert lists to PostgreSQL arrays and handle empty values
                 controller_support = details.get('controller_support', []) or []
@@ -929,7 +929,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         
         # Get achievement stats
         try:
-            achievements = get_achievement_stats(appid, api_key)
+            achievements = steam_get_achievement_stats(appid, api_key)
             if achievements:
                 for achievement in achievements:
                     cur.execute("""
@@ -955,7 +955,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         
         # Get player history
         try:
-            player_history = get_player_history(appid, api_key)
+            player_history = steam_get_player_history(appid, api_key)
             if player_history:
                 for history in player_history:
                     cur.execute("""
@@ -973,7 +973,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         
         # Get game news
         try:
-            news = get_game_news(appid, api_key)
+            news = steam_get_game_news(appid, api_key)
             if news:
                 for article in news:
                     cur.execute("""
@@ -1001,7 +1001,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         
         # Get system requirements
         try:
-            requirements = get_system_requirements(appid, api_key)
+            requirements = steam_get_system_requirements(appid, api_key)
             if requirements:
                 for req in requirements:
                     cur.execute("""
@@ -1027,7 +1027,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         
         # Get user reviews
         try:
-            reviews = get_user_reviews(appid, api_key)
+            reviews = steam_get_user_reviews(appid, api_key)
             if reviews:
                 cur.execute("""
                     INSERT INTO user_reviews (
@@ -1057,7 +1057,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         
         # Get price history
         try:
-            price_history = get_price_history(appid, api_key)
+            price_history = steam_get_price_history(appid, api_key)
             if price_history:
                 cur.execute("""
                     INSERT INTO price_history (
@@ -1085,7 +1085,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         
         # Get community stats
         try:
-            stats = get_community_stats(appid, api_key)
+            stats = steam_get_community_stats(appid, api_key)
             if stats:
                 cur.execute("""
                     INSERT INTO community_stats (
@@ -1115,7 +1115,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         
         # Get market data
         try:
-            market_data = get_market_data(appid, api_key)
+            market_data = steam_get_market_data(appid, api_key)
             if market_data:
                 cur.execute("""
                     INSERT INTO market_data (
@@ -1152,7 +1152,7 @@ def save_additional_data(appid: int, api_key: str) -> None:
         cur.close()
         conn.close()
 
-def collect_and_save():
+def steam_collect_and_save():
     """Main function to collect and save all data"""
     try:
         # Initialize database
@@ -1161,7 +1161,7 @@ def collect_and_save():
         
         # Get top games
         logging.info("Fetching top games...")
-        top_games = get_top_games()
+        top_games = steam_get_top_games()
         logging.info(f"Found {len(top_games)} top games")
         
         # Process each game with progress bar
@@ -1173,13 +1173,13 @@ def collect_and_save():
                 
                 # Get basic game details
                 logging.debug(f"Processing game: {name} (ID: {appid})")
-                game_details = get_game_details(appid)
+                game_details = steam_get_game_details(appid)
                 if game_details:
-                    save_to_db(game_details)
+                    steam_save_to_db(game_details)
                 
                 # Get additional data
                 logging.debug(f"Fetching additional data for {name}")
-                save_additional_data(appid, game_details)
+                steam_save_additional_data(appid, game_details)
                 
             except Exception as e:
                 logging.error(f"Error processing game {game.get('name', 'Unknown')}: {str(e)}", exc_info=True)
@@ -1187,7 +1187,7 @@ def collect_and_save():
         
         # Calculate genre benchmarks
         logging.info("Calculating genre benchmarks...")
-        calculate_genre_benchmarks()
+        steam_calculate_genre_benchmarks()
         logging.info("Genre benchmarks calculated successfully")
         
         logging.info("Data collection completed successfully")
@@ -1197,4 +1197,4 @@ def collect_and_save():
         raise
 
 if __name__ == "__main__":
-    collect_and_save() 
+    steam_collect_and_save() 

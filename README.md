@@ -1,10 +1,10 @@
 # Steam Analytics Dashboard
 
-A real-time analytics dashboard for Steam games, providing insights into player counts, game metrics, and genre performance.
+A analytics dashboard for Steam games, providing insights into player counts, game metrics, and genre performance.
 
 ## Features
 
-- Real-time data collection from Steam API
+- Data collection from Steam API
 - Interactive dashboard with multiple visualizations
 - Genre performance metrics and analysis
 - Game-specific analytics and trends
@@ -55,12 +55,12 @@ python src/init_db.py
 
 1. Start the data collector:
 ```bash
-python src/data_collector.py
+python steam_src/steam_data_collector.py
 ```
 
 2. Start the dashboard:
 ```bash
-python dashboard/app.py
+python steam_dashboard/steam_app.py
 ```
 
 3. Access the dashboard at `http://localhost:8051`
@@ -69,12 +69,12 @@ python dashboard/app.py
 
 ```
 steam_analytics/
-├── dashboard/
-│   └── app.py              # Dash application
-├── src/
-│   ├── data_collector.py   # Data collection from Steam API
-│   ├── init_db.py         # Database initialization
-│   └── utils.py           # Utility functions
+├── steam_dashboard/
+│   └── steam_app.py              # Dash application
+├── steam_src/
+│   ├── steam_data_collector.py   # Data collection from Steam API
+│   ├── steam_init_db.py         # Database initialization
+│   └── steam_utils.py           # Utility functions
 ├── logs/                   # Log files
 ├── requirements.txt        # Python dependencies
 ├── run_all.sh             # Script to start all services
