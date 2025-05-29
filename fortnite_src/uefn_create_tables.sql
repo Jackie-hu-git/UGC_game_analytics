@@ -3,10 +3,9 @@ CREATE TABLE IF NOT EXISTS uefn_top_games (
     game_id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     creator_name VARCHAR(255),
-    description TEXT,
-    thumbnail_url TEXT,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    display_name VARCHAR(255),
+    created_in VARCHAR(50),
+    category VARCHAR(100),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -31,9 +30,9 @@ CREATE TABLE IF NOT EXISTS uefn_game_metrics (
 -- Create UEFN_game_tags table for game categorization
 CREATE TABLE IF NOT EXISTS uefn_game_tags (
     id SERIAL PRIMARY KEY,
-    game_id VARCHAR(100) NOT NULL,
+    game_id VARCHAR(255) REFERENCES uefn_top_games(game_id),
     tag_name VARCHAR(100) NOT NULL,
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(game_id, tag_name)
 );
 

@@ -269,10 +269,9 @@ def save_games_to_db(games: List[Dict[str, Any]]) -> None:
                     game["code"],
                     game["title"],
                     game.get("creatorCode"),
-                    game.get("description"),
-                    game.get("thumbnailUrl"),
-                    None,  # created_at not available in API
-                    None,  # updated_at not available in API
+                    game.get("displayName"),
+                    game.get("createdIn"),
+                    game.get("category")
                 ))
             except KeyError as e:
                 logger.error(f"Missing required field in game data: {e}")
@@ -286,18 +285,28 @@ def save_games_to_db(games: List[Dict[str, Any]]) -> None:
         # Bulk insert games
         execute_values(cur, """
             INSERT INTO uefn_top_games (
-                game_id, title, creator_name, description,
-                thumbnail_url, created_at, updated_at
+                game_id, title, creator_name, display_name,
+                created_in, category
             ) VALUES %s
             ON CONFLICT (game_id) DO UPDATE SET
                 title = EXCLUDED.title,
                 creator_name = EXCLUDED.creator_name,
-                description = EXCLUDED.description,
-                thumbnail_url = EXCLUDED.thumbnail_url,
-                created_at = EXCLUDED.created_at,
-                updated_at = EXCLUDED.updated_at,
+                display_name = EXCLUDED.display_name,
+                created_in = EXCLUDED.created_in,
+                category = EXCLUDED.category,
                 timestamp = CURRENT_TIMESTAMP
         """, game_data)
+        
+        # Save tags
+        for game in games:
+            if "tags" in game and game["tags"]:
+                tag_data = [(game["code"], tag) for tag in game["tags"] if tag]
+                if tag_data:
+                    execute_values(cur, """
+                        INSERT INTO uefn_game_tags (game_id, tag_name)
+                        VALUES %s
+                        ON CONFLICT (game_id, tag_name) DO NOTHING
+                    """, tag_data)
         
         conn.commit()
         cur.close()
