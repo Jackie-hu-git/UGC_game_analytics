@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: uefn-analytics
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn fortnite_dashboard.uefn_app:server --config gunicorn_config.py
+    envVars:
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        sync: false 

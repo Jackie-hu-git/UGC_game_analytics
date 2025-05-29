@@ -628,4 +628,5 @@ def update_status(n):
         return dbc.Alert("Error checking status", color="danger"), "Last update: Unknown"
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8051) 
+    server = app.server
+    app.run_server(debug=False, host='0.0.0.0', port=10000) 
