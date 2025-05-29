@@ -20,10 +20,9 @@ A analytics dashboard for Steam games, providing insights into player counts, ga
 ## Installation
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/steam_analytics.git
-cd steam_analytics
-```
+
+git clone https://github.com/Jackie-hu-git/UGC_game_analytics.git
+cd UGC_game_analytics
 
 2. Create and activate a virtual environment:
 ```bash
