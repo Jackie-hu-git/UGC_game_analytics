@@ -1,37 +1,25 @@
--- Create UEFN_top_games table
+-- Create UEFN tables
 CREATE TABLE IF NOT EXISTS uefn_top_games (
-    id SERIAL PRIMARY KEY,
-    game_id VARCHAR(100) NOT NULL UNIQUE,
+    game_id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     creator_name VARCHAR(255),
-    creator_id VARCHAR(100),
-    description TEXT,
-    thumbnail_url TEXT,
-    created_at TIMESTAMP WITH TIME ZONE,
-    updated_at TIMESTAMP WITH TIME ZONE,
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create UEFN_game_metrics table for storing daily metrics
 CREATE TABLE IF NOT EXISTS uefn_game_metrics (
     id SERIAL PRIMARY KEY,
-    game_id VARCHAR(100) NOT NULL,
-    date DATE NOT NULL,
-    -- Core metrics
-    plays INTEGER DEFAULT 0,
-    unique_players INTEGER DEFAULT 0,
-    minutes_played INTEGER DEFAULT 0,
-    favorites INTEGER DEFAULT 0,
-    recommendations INTEGER DEFAULT 0,
-    average_minutes_per_player DECIMAL(10,2) DEFAULT 0,
-    peak_ccu INTEGER DEFAULT 0,
-    -- Retention metrics
-    retention_d1 DECIMAL(5,2) DEFAULT 0,
-    retention_d7 DECIMAL(5,2) DEFAULT 0,
-    -- Timestamps
-    metrics_timestamp TIMESTAMP WITH TIME ZONE,
+    game_id VARCHAR(255) REFERENCES uefn_top_games(game_id),
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(game_id, date)
+    plays INTEGER,
+    unique_players INTEGER,
+    minutes_played INTEGER,
+    favorites INTEGER,
+    recommendations INTEGER,
+    average_minutes_per_player FLOAT,
+    peak_ccu INTEGER,
+    retention_d1 FLOAT,
+    retention_d7 FLOAT,
+    UNIQUE(game_id, timestamp)
 );
 
 -- Create UEFN_game_tags table for game categorization
@@ -44,7 +32,6 @@ CREATE TABLE IF NOT EXISTS uefn_game_tags (
 );
 
 -- Create indexes for better query performance
-CREATE INDEX IF NOT EXISTS idx_uefn_top_games_game_id ON uefn_top_games(game_id);
+CREATE INDEX IF NOT EXISTS idx_uefn_game_metrics_timestamp ON uefn_game_metrics(timestamp);
 CREATE INDEX IF NOT EXISTS idx_uefn_game_metrics_game_id ON uefn_game_metrics(game_id);
-CREATE INDEX IF NOT EXISTS idx_uefn_game_metrics_date ON uefn_game_metrics(date);
 CREATE INDEX IF NOT EXISTS idx_uefn_game_tags_game_id ON uefn_game_tags(game_id); 
