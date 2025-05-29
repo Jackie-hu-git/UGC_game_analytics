@@ -1,3 +1,8 @@
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS uefn_game_tags;
+DROP TABLE IF EXISTS uefn_game_metrics;
+DROP TABLE IF EXISTS uefn_top_games;
+
 -- Create UEFN tables
 CREATE TABLE IF NOT EXISTS uefn_top_games (
     game_id VARCHAR(255) PRIMARY KEY,
