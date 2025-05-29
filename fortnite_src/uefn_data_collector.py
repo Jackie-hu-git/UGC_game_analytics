@@ -122,6 +122,7 @@ def get_top_games(limit: int = 500) -> List[Dict[str, Any]]:
         
         all_games = []
         seen_codes = set()  # Track unique game codes
+        seen_cursors = set()  # Track seen cursors to prevent loops
         
         # First, get the initial page
         logger.info(f"Fetching first page of games from {API_BASE_URL}/islands")
@@ -147,6 +148,7 @@ def get_top_games(limit: int = 500) -> List[Dict[str, Any]]:
         
         # Get the cursor from the last game in the page
         current_cursor = games[-1]["meta"]["page"]["cursor"] if games else None
+        seen_cursors.add(current_cursor)
         
         # Fetch all pages using cursor-based pagination
         while current_cursor and len(all_games) < limit:
@@ -163,16 +165,30 @@ def get_top_games(limit: int = 500) -> List[Dict[str, Any]]:
             logger.info(f"Got {len(page_games)} games in this page")
             
             if not page_games:
+                logger.info("No more games to fetch")
                 break
                 
             # Add only new games
+            new_games_added = 0
             for game in page_games:
                 if game["code"] not in seen_codes:
                     all_games.append(game)
                     seen_codes.add(game["code"])
+                    new_games_added += 1
+            
+            if new_games_added == 0:
+                logger.info("No new games found in this page, stopping pagination")
+                break
             
             # Get the cursor from the last game in this page
             current_cursor = page_games[-1]["meta"]["page"]["cursor"]
+            
+            # Check if we've seen this cursor before
+            if current_cursor in seen_cursors:
+                logger.info("Detected cursor loop, stopping pagination")
+                break
+                
+            seen_cursors.add(current_cursor)
             time.sleep(1)  # Rate limiting
             
         logger.info(f"Total unique games collected: {len(all_games)}")
