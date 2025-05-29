@@ -2,6 +2,10 @@ import os
 import sys
 from sqlalchemy import create_engine, text
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -18,12 +22,22 @@ def setup_database():
         db_host = os.getenv('DB_HOST')
         db_name = os.getenv('DB_NAME')
         
+        # Debug: Print environment variables (without sensitive data)
+        logger.info(f"DB_HOST: {db_host}")
+        logger.info(f"DB_NAME: {db_name}")
+        logger.info(f"DB_USER exists: {bool(db_user)}")
+        logger.info(f"DB_PASSWORD exists: {bool(db_password)}")
+        
         if not all([db_user, db_password, db_host, db_name]):
             logger.error("Missing database credentials in environment variables")
             sys.exit(1)
         
-        # Create database URL
-        database_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
+        # Complete the host name with Render's domain
+        full_host = f"{db_host}.oregon-postgres.render.com"
+        
+        # Create database URL with port 5432
+        database_url = f"postgresql://{db_user}:{db_password}@{full_host}:5432/{db_name}"
+        logger.info(f"Attempting to connect to database at {full_host}")
         
         # Create engine
         engine = create_engine(database_url)

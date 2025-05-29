@@ -57,18 +57,31 @@ def get_access_token() -> str:
         raise
 
 def get_db_connection():
-    """Create a connection to the PostgreSQL database."""
+    """Create a database connection."""
     try:
+        # Get database credentials from environment variables
+        db_user = os.getenv('DB_USER')
+        db_password = os.getenv('DB_PASSWORD')
+        db_host = os.getenv('DB_HOST')
+        db_name = os.getenv('DB_NAME')
+        
+        if not all([db_user, db_password, db_host, db_name]):
+            raise ValueError("Missing database credentials in environment variables")
+        
+        # Complete the host name with Render's domain
+        full_host = f"{db_host}.oregon-postgres.render.com"
+        
+        # Create connection
         conn = psycopg2.connect(
-            host=os.getenv("DB_HOST", "localhost"),
-            database=os.getenv("DB_NAME", "steam"),
-            user=os.getenv("DB_USER", "postgres"),
-            password=os.getenv("DB_PASSWORD", "postgres"),
-            port=os.getenv("DB_PORT", "5432")
+            host=full_host,
+            database=db_name,
+            user=db_user,
+            password=db_password,
+            port=5432
         )
         return conn
-    except psycopg2.Error as e:
-        logger.error(f"Error connecting to database: {e}")
+    except Exception as e:
+        logger.error(f"Error connecting to database: {str(e)}")
         raise
 
 def init_db():
