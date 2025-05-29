@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Database configuration
+export DB_USER="your_db_user"
+export DB_PASSWORD="your_db_password"
+export DB_HOST="localhost"
+export DB_NAME="steam"
+
+# Start dashboard
+python app.py 

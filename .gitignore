@@ -39,8 +39,14 @@ logs/
 *.db
 *.sqlite3
 
-# Environment variables
+# Environment variables and secrets
 .env
+.env.*
+*.env
+run_all.sh
+dashboard/run_dashboard.sh
+game_details_cache.json
+game_names_cache.json
 
 # OS
 .DS_Store
