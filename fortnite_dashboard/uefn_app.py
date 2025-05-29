@@ -44,6 +44,7 @@ def get_latest_timestamp():
 
 # Initialize the Dash app
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 
 # Create tab components
 def create_overview_tab():
@@ -628,5 +629,4 @@ def update_status(n):
         return dbc.Alert("Error checking status", color="danger"), "Last update: Unknown"
 
 if __name__ == '__main__':
-    server = app.server
     app.run_server(debug=False, host='0.0.0.0', port=10000) 
