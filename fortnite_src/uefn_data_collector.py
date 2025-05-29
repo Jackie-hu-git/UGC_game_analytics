@@ -269,11 +269,10 @@ def save_games_to_db(games: List[Dict[str, Any]]) -> None:
                     game["code"],
                     game["title"],
                     game.get("creatorCode"),
-                    None,  # creator_id not available in API
-                    None,  # description not available in API
-                    None,  # thumbnail_url not available in API
+                    game.get("description"),
+                    game.get("thumbnailUrl"),
                     None,  # created_at not available in API
-                    None   # updated_at not available in API
+                    None,  # updated_at not available in API
                 ))
             except KeyError as e:
                 logger.error(f"Missing required field in game data: {e}")
@@ -287,13 +286,12 @@ def save_games_to_db(games: List[Dict[str, Any]]) -> None:
         # Bulk insert games
         execute_values(cur, """
             INSERT INTO uefn_top_games (
-                game_id, title, creator_name, creator_id, description,
+                game_id, title, creator_name, description,
                 thumbnail_url, created_at, updated_at
             ) VALUES %s
             ON CONFLICT (game_id) DO UPDATE SET
                 title = EXCLUDED.title,
                 creator_name = EXCLUDED.creator_name,
-                creator_id = EXCLUDED.creator_id,
                 description = EXCLUDED.description,
                 thumbnail_url = EXCLUDED.thumbnail_url,
                 created_at = EXCLUDED.created_at,

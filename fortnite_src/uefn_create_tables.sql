@@ -3,23 +3,29 @@ CREATE TABLE IF NOT EXISTS uefn_top_games (
     game_id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     creator_name VARCHAR(255),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    description TEXT,
+    thumbnail_url TEXT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS uefn_game_metrics (
     id SERIAL PRIMARY KEY,
     game_id VARCHAR(255) REFERENCES uefn_top_games(game_id),
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    plays INTEGER,
-    unique_players INTEGER,
-    minutes_played INTEGER,
-    favorites INTEGER,
-    recommendations INTEGER,
-    average_minutes_per_player FLOAT,
-    peak_ccu INTEGER,
-    retention_d1 FLOAT,
-    retention_d7 FLOAT,
-    UNIQUE(game_id, timestamp)
+    date DATE NOT NULL,
+    plays INTEGER DEFAULT 0,
+    unique_players INTEGER DEFAULT 0,
+    minutes_played INTEGER DEFAULT 0,
+    favorites INTEGER DEFAULT 0,
+    recommendations INTEGER DEFAULT 0,
+    average_minutes_per_player FLOAT DEFAULT 0,
+    peak_ccu INTEGER DEFAULT 0,
+    retention_d1 FLOAT DEFAULT 0,
+    retention_d7 FLOAT DEFAULT 0,
+    metrics_timestamp TIMESTAMP,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(game_id, date)
 );
 
 -- Create UEFN_game_tags table for game categorization
