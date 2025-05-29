@@ -13,20 +13,55 @@ import pytz
 import logging
 from sqlalchemy import create_engine, text
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 # Database connection with error handling
 def get_db_connection():
     try:
+        # Get database credentials from environment variables
+        db_user = os.getenv('DB_USER')
+        db_password = os.getenv('DB_PASSWORD')
+        db_host = os.getenv('DB_HOST')
+        db_name = os.getenv('DB_NAME')
+        
+        # Log connection attempt (without sensitive data)
+        logger.info(f"Attempting to connect to database at {db_host}")
+        
+        # Create database URL
+        database_url = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
+        
+        # Create engine with connection pooling
         engine = create_engine(
-            f"postgresql://{os.getenv('DB_USER', 'postgres')}:{os.getenv('DB_PASSWORD', 'postgres')}@{os.getenv('DB_HOST', 'localhost')}/{os.getenv('DB_NAME', 'steam')}"
+            database_url,
+            pool_size=5,
+            max_overflow=10,
+            pool_timeout=30,
+            pool_recycle=1800
         )
+        
+        # Test the connection
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+            logger.info("Successfully connected to database")
+        
         return engine
     except Exception as e:
-        print(f"Error connecting to database: {e}")
-        sys.exit(1)
+        logger.error(f"Error connecting to database: {str(e)}", exc_info=True)
+        # Return None instead of exiting, so the app can handle the error gracefully
+        return None
 
 def get_latest_timestamp():
     """Get the latest timestamp from the database"""
     engine = get_db_connection()
+    if engine is None:
+        logger.error("Cannot get latest timestamp: No database connection")
+        return None
+        
     try:
         with engine.connect() as conn:
             result = conn.execute(text("""
@@ -39,7 +74,7 @@ def get_latest_timestamp():
                 return row[0].astimezone(pytz.UTC)
             return None
     except Exception as e:
-        logging.error(f"Error getting latest timestamp: {str(e)}", exc_info=True)
+        logger.error(f"Error getting latest timestamp: {str(e)}", exc_info=True)
         return None
 
 # Initialize the Dash app
@@ -244,7 +279,7 @@ def update_top_games(n):
         
         return fig
     except Exception as e:
-        logging.error(f"Error updating top games graph: {str(e)}", exc_info=True)
+        logger.error(f"Error updating top games graph: {str(e)}", exc_info=True)
         return go.Figure()
 
 # Callback for player engagement graph
@@ -317,7 +352,7 @@ def update_player_engagement(n):
         
         return fig
     except Exception as e:
-        logging.error(f"Error updating player engagement graph: {str(e)}", exc_info=True)
+        logger.error(f"Error updating player engagement graph: {str(e)}", exc_info=True)
         return go.Figure()
 
 # Callback for session analysis graph
@@ -393,6 +428,7 @@ def update_session_analysis(n):
         
         return fig
     except Exception as e:
+        logger.error(f"Error updating session analysis graph: {str(e)}", exc_info=True)
         logging.error(f"Error updating session analysis graph: {str(e)}", exc_info=True)
         return go.Figure()
 
